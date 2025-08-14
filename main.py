@@ -16,7 +16,7 @@ def to_embed_iframe(file_id):
 def to_proper_case(s):
     return " ".join([word.capitalize() for word in s.split()])
 
-st.title("Google Drive Viewer with Metadata Display & Rotation")
+st.title("Google Drive Viewer with Driver details")
 
 # Input box
 input_data = st.text_area("Paste your tab-, comma-, or newline-separated data below:")
@@ -99,7 +99,7 @@ if input_data:
         with col2:
             st.subheader("Additional Information")
 
-            # If we have names, display full name first
+            # Show full name in proper case
             if name_fields["first name"] or name_fields["middle name"] or name_fields["last name"]:
                 full_name = " ".join(filter(None, [
                     to_proper_case(name_fields["first name"]),
@@ -108,8 +108,19 @@ if input_data:
                 ]))
                 st.text(f"Full Name: {full_name}")
 
-            # Show all other info
+            # Show all other info in CAPS
             for item in other_data:
-                st.text(item)
+                if ":" in item:
+                    key, value = item.split(":", 1)
+                    key = key.strip()
+                    value = value.strip()
+
+                    # Remove hyphen from license number
+                    if key.lower() == "license number":
+                        value = value.replace("-", "")
+
+                    st.text(f"{key.upper()}: {value.upper()}")
+                else:
+                    st.text(item.upper())
 
         st.markdown("---")
